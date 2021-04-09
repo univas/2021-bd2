@@ -1,0 +1,146 @@
+INSERT INTO projeto (inscricao,titulo,dataInicio,dataFim,orcamento,matProfessor) VALUES (9, 'proj9', '2021-01-01', '2021-02-11', 90000, 1); 
+INSERT INTO projeto (inscricao,titulo,dataInicio,dataFim,orcamento,matProfessor) VALUES (10, 'proj10', '2021-01-01', '2021-02-11', 90000, 1); 
+
+INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 1, '2021-01-02', '2021-01-21'); 
+INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 2, '2021-02-02', null);  -- ainda participa
+
+
+--corrigir bug no insert:
+--INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 3, '2020-08-02', '2020-03-23');
+
+
+1)
+select inscricao, titulo from projeto where extract(year from datainicio) = 2020;
+
+2)
+select count(inscricao) quantidade, extract(year from datainicio) as ano from projeto group by extract(year from datainicio);
+
+3)
+select count(proj.inscricao) quantidade, sum(proj.orcamento) orcamentoTotal, prof.nome 
+from projeto proj
+join professor prof ON prof.matricula = proj.matProfessor --INNER JOIN
+group by prof.nome;
+
+4)
+select prof.nome, prof.email, proj.titulo
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+where prof.titulacao = 'doutor';
+
+5)
+select count(inscricao) as quantidade, titulacao
+from professor
+join projeto ON matricula = matProfessor
+group by titulacao; --sem alias
+
+6)
+select prof.nome, proj.dataInicio
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+where extract(MONTH from proj.dataInicio) >= 1 and extract(MONTH from proj.dataInicio) <= 3;
+
+
+select prof.nome, proj.dataInicio
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+where extract(MONTH from proj.dataInicio) BETWEEN 1 and 3;
+
+--BETWEEN - entre duas coisas (números) - indica um intervalo (a comparação é inclusiva - incluir o 1 e o 3)
+
+7)
+select p.titulo, count(e.matAluno) quantidadeAlunos
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+group by p.titulo;
+
+
+8a)--usando o código do curso
+select avg(p.datafim - p.datainicio), a.curso
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+join aluno a  ON a.matricula = e.matAluno
+group by a.curso;
+
+8b)--usando o nome do curso
+select avg(p.datafim - p.datainicio), c.nome
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+join aluno a  ON a.matricula = e.matAluno
+join curso c  ON c.sigla = a.curso
+group by c.nome;
+
+
+9)
+select a.nome
+from aluno a
+join equipe e ON a.matricula = e.matAluno
+where dataFimParticip is null;
+
+
+10)--old
+select count(e.matAluno) as qtdAluno
+from equipe e
+where e.dataFimParticip is null;
+
+--new
+select count(e.matAluno) as qtdAluno, e.codProjeto
+from equipe e
+where e.dataFimParticip is null
+group by e.codProjeto;
+
+
+11)
+fazer 2 consultas separadas e usar um comando para unir os resultados (UNION).
+
+--1a parte
+(
+select count(matAluno) as qtdAlunos, extract(MONTH from dataInicioParticip) as mes, extract(YEAR from dataInicioParticip) as ano, 'entrou' as acao
+from equipe
+group by extract(MONTH from dataInicioParticip), extract(YEAR from dataInicioParticip)
+order by ano, mes
+)
+UNION --todos os selects devem retornar o mesmo número de colunas e com os tipos de dados compatíveis
+--o UNION pode unir quantos selects forem necessários.
+--2a parte
+(
+select count(matAluno) as qtdAlunos, extract(MONTH from dataFimParticip) as mes, extract(YEAR from dataFimParticip) as ano, 'saiu' as acao
+from equipe
+where dataFimParticip IS NOT NULL
+group by extract(MONTH from dataFimParticip), extract(YEAR from dataFimParticip)
+order by ano, mes
+)
+;
+
+
+--teste!!!
+select matAluno, extract(MONTH from dataFimParticip) as mes, extract(YEAR from dataFimParticip) as ano
+from equipe
+where dataFimParticip IS NOT NULL
+order by ano, mes, matAluno;
+
+
+
+12)
+select count(e.matAluno) as qtdAlunos, p.titulo
+from equipe e
+join projeto p ON p.inscricao = e.codProjeto
+where dataFimParticip IS NOT NULL
+group by p.titulo
+order by qtdAlunos DESC, p.titulo; --crescente(default): ASC. Descrescente: DESC
+
+
+13)
+
+select p.titulo, avg(dataFimParticip - dataInicioParticip) as mediaPermanencia
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+where dataFimParticip IS NOT NULL
+group by p.titulo
+order by p.titulo;
+
+
+
+select * 
+from equipe 
+where dataFimParticip IS NOT NULL  and codProjeto = 8;
+
