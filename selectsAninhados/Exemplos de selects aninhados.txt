@@ -1,0 +1,86 @@
+Exemplos de selects aninhados
+
+#1) dentro da clásula "select"
+
+select 
+(
+  select count(matricula) as qtdAluno from aluno
+),
+(
+  select count(inscricao) as qtdProjeto from projeto
+),
+(
+  select count(matAluno) qtdAluno from equipe
+);
+
+
+
+
+#2) dentro da clásula "from"
+
+select * from tabela_temporaria;
+
+(
+select count(matricula) as qtdAluno from aluno
+) as tabela_temporaria
+
+
+select * 
+from (
+select count(matricula) as qtdAluno from aluno
+) as tabela_temporaria;
+
+
+
+
+
+#3) dentro da clásula "join"
+
+select *
+from tabela1 t1
+join tabela_temporaria tt ON t1.pk = tt.fk
+
+
+
+select t1.inscricao, t1.titulo, tt.matricula, tt.nome
+from projeto t1
+join 
+( select matricula, nome from professor where titulacao = 'mestre' )
+tt ON tt.matricula = t1.matProfessor;
+
+
+
+
+#4) dentro da clásula "where"
+
+#Caso 4.1)
+
+select a.matricula, a.curso 
+from aluno a
+where a.curso = (select sigla from curso where nome = 'Biologia');
+
+
+#Caso 4.2)
+
+select a.matricula, a.curso 
+from aluno a
+where a.curso IN (select sigla from curso where nome like '%a');
+
+
+--usando o IN com string
+select * from curso where nome in ('Biologia', 'Banco de dados');
+
+
+#5) dentro da clásula "having"
+
+select count(matricula) qtdAluno, curso 
+from aluno
+group by curso
+having count(matricula) > 
+(
+select count(matricula) as qtdAluno 
+from aluno
+where curso = 1
+)
+;
+

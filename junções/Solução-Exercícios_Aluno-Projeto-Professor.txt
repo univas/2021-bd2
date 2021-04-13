@@ -5,6 +5,7 @@ INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALU
 INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 2, '2021-02-02', null);  -- ainda participa
 
 
+
 --corrigir bug no insert:
 --INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 3, '2020-08-02', '2020-03-23');
 
@@ -140,7 +141,27 @@ order by p.titulo;
 
 
 
-select * 
-from equipe 
-where dataFimParticip IS NOT NULL  and codProjeto = 8;
+14)
+--select count(matAluno) qtdAluno, codProjeto from equipe group by codProjeto;
+
+--select count(matAluno) qtdAluno, count(codProjeto) qtdProjeto from equipe;
+
+--select matAluno, codProjeto from equipe;
+
+--select count(matAluno) qtdAluno from equipe;
+
+--select count(inscricao) qtdProjeto from projeto;
+
+
+select 
+(
+   select count(matAluno) qtdAluno from equipe
+) /
+(
+   select count(inscricao) as qtdProjeto from projeto
+)
+;
+
+
+15)
 
