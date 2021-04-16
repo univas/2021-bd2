@@ -163,5 +163,109 @@ select
 ;
 
 
+
 15)
+
+
+select saida.titulo, saida.qtdQueSairam, permanece.qtdAindaEsta, (saida.qtdQueSairam * 100 / permanece.qtdAindaEsta) || '%' as percentual
+from 
+
+(
+select p.titulo, count(e.matAluno) as qtdQueSairam
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+where e.dataFimParticip IS NOT NULL
+group by p.titulo
+) saida
+
+join 
+
+(
+select p.titulo, count(e.matAluno) as qtdAindaEsta
+from projeto p
+join equipe e ON p.inscricao = e.codProjeto
+where e.dataFimParticip IS NULL
+group by p.titulo
+) permanece
+
+ ON saida.titulo = permanece.titulo;
+
+
+
+
+16)
+
+select prof.nome, count(e.matAluno) as qtdAlunosAtualmente
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+join equipe e ON proj.inscricao = e.codProjeto
+where e.dataFimParticip IS NULL
+group by prof.nome;
+
+
+17)
+
+select prof.nome, count(e.matAluno) as qtdAlunosDesistentes
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+join equipe e ON proj.inscricao = e.codProjeto
+where e.dataFimParticip IS NOT NULL
+group by prof.nome
+order by qtdAlunosDesistentes DESC, nome ASC;
+
+
+18)
+
+select a.nome
+from professor prof
+join projeto proj ON prof.matricula = proj.matProfessor
+join equipe e ON proj.inscricao = e.codProjeto
+join aluno a  ON a.matricula = e.matAluno
+where prof.titulacao = 'doutor' AND e.dataFimParticip IS NOT NULL;
+
+
+19)
+
+-- o distinct remove os registros (todas as colunas) duplicados
+select DISTINCT a.email--, e.codProjeto
+from equipe e
+join aluno a ON a.matricula = e.matAluno
+where e.dataFimParticip IS NOT NULL;
+
+
+20)
+select a.nome, count(e.codProjeto) as qtdDeProjetos
+from equipe e
+join aluno a ON a.matricula = e.matAluno
+where e.dataFimParticip IS NULL
+group by a.nome
+having count(e.codProjeto) = 1;
+
+
+21)
+
+select temp.nome, valorTotal/qtdAlunos valorPorAlunoPorProfessor
+from
+(
+select prof.nome, sum(proj.orcamento) as valorTotal, count(e.matAluno) qtdAlunos
+from equipe e
+join aluno a ON a.matricula = e.matAluno
+join projeto proj ON proj.inscricao = e.codProjeto
+join professor prof ON prof.matricula = proj.matProfessor
+group by prof.nome
+) temp;
+
+
+
+22)
+
+
+
+
+
+
+
+
+
+
 
