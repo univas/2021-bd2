@@ -257,9 +257,124 @@ group by prof.nome
 
 
 
-22)
+22) --analisar com cuidado, e buscar mais informações sobre a pergunta.
+
+--v1 (não é bem isso)
+select avg(proj.orcamento) vamorMedio, e.matAluno, proj.titulo
+from projeto proj
+join equipe e ON proj.inscricao = e.codProjeto
+group by e.matAluno, proj.titulo
+order by proj.titulo, e.matAluno;
 
 
+
+--v2 - após análise, achei importante mostrar o código do projeto
+select proj.orcamento / qtdAluno as valorOrcamentoPorAluno, temp01.codProjeto
+from
+(
+select count(e.matAluno) qtdAluno, e.codProjeto
+from equipe e
+group by e.codProjeto
+) temp01
+join projeto proj ON proj.inscricao = temp01.codProjeto;
+
+
+
+23)
+
+--v1 com select aninhado
+
+select nome, matricula from professor
+where matricula NOT IN 
+(
+select distinct matProfessor from projeto
+);
+
+
+
+--v2
+select prof.nome, prof.matricula, proj.titulo as nomeProjeto
+from professor prof
+LEFT join projeto proj ON prof.matricula = proj.matProfessor
+where proj.titulo is null;
+
+
+
+24)
+
+select a.matricula
+from aluno a
+left join equipe e ON a.matricula = e.matAluno
+where e.matAluno is NULL;
+
+
+
+25)
+
+--v1 - essa consulta não está correta
+select a.curso, count(codProjeto) as qtdProjetos
+from aluno a
+join equipe e ON a.matricula = e.matAluno
+group by a.curso;
+
+
+--v2
+--TODO: analisar e montar uma consulta consistente, pois essa consulta retorna 22 projeto
+--e nós temos apenas 10 projetos cadastrados.
+
+
+26)
+
+--TODO: mesma ideia do 25
+
+
+
+27) -parece o v1 do exercício 25
+
+--v1 - ainda não é suficiente, pois contabiliza projeto a mais
+select c.nome, count(codProjeto) as qtdProjetos
+from aluno a
+join equipe e ON a.matricula = e.matAluno
+join curso c  ON c.sigla = a.curso
+group by c.nome;
+
+
+--v2 TODO: não pode fazer o join com a equipe
+
+
+28)
+
+select dataFim - dataInicio as duracao, inscricao
+from projeto;
+
+--TODO: juntar de alguma forma com o curso
+
+
+29) TODO: usar a mesma estratégia da questão 25
+
+
+
+30)
+
+select nome from professor where titulacao = 
+(
+select titulacao from professor where nome = 'Robson'
+);
+
+
+31)
+
+--o limit é específico do postgres
+
+select titulo, orcamento
+from projeto
+order by orcamento DESC
+limit 4 
+UNION
+select titulo, orcamento
+from projeto
+order by orcamento ASC
+limit 4; --o limit é específico do postgres
 
 
 
