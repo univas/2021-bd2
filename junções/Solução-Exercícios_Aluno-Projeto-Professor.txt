@@ -4,6 +4,9 @@ INSERT INTO projeto (inscricao,titulo,dataInicio,dataFim,orcamento,matProfessor)
 INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 1, '2021-01-02', '2021-01-21'); 
 INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (8, 2, '2021-02-02', null);  -- ainda participa
 
+INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (5, 3, '2020-05-01', '2020-06-01');  -- já saiu
+INSERT INTO equipe (codProjeto,matAluno,dataInicioParticip,dataFimParticip) VALUES (5, 2, '2020-05-01', null);  -- ainda participa
+
 
 
 --corrigir bug no insert:
@@ -91,7 +94,7 @@ group by e.codProjeto;
 
 
 11)
-fazer 2 consultas separadas e usar um comando para unir os resultados (UNION).
+--fazer 2 consultas separadas e usar um comando para unir os resultados (UNION).
 
 --1a parte
 (
@@ -131,7 +134,6 @@ order by qtdAlunos DESC, p.titulo; --crescente(default): ASC. Descrescente: DESC
 
 
 13)
-
 select p.titulo, avg(dataFimParticip - dataInicioParticip) as mediaPermanencia
 from projeto p
 join equipe e ON p.inscricao = e.codProjeto
@@ -165,8 +167,6 @@ select
 
 
 15)
-
-
 select saida.titulo, saida.qtdQueSairam, permanece.qtdAindaEsta, (saida.qtdQueSairam * 100 / permanece.qtdAindaEsta) || '%' as percentual
 from 
 
@@ -194,7 +194,6 @@ group by p.titulo
 
 
 16)
-
 select prof.nome, count(e.matAluno) as qtdAlunosAtualmente
 from professor prof
 join projeto proj ON prof.matricula = proj.matProfessor
@@ -204,7 +203,6 @@ group by prof.nome;
 
 
 17)
-
 select prof.nome, count(e.matAluno) as qtdAlunosDesistentes
 from professor prof
 join projeto proj ON prof.matricula = proj.matProfessor
@@ -215,7 +213,6 @@ order by qtdAlunosDesistentes DESC, nome ASC;
 
 
 18)
-
 select a.nome
 from professor prof
 join projeto proj ON prof.matricula = proj.matProfessor
@@ -225,7 +222,6 @@ where prof.titulacao = 'doutor' AND e.dataFimParticip IS NOT NULL;
 
 
 19)
-
 -- o distinct remove os registros (todas as colunas) duplicados
 select DISTINCT a.email--, e.codProjeto
 from equipe e
@@ -243,7 +239,6 @@ having count(e.codProjeto) = 1;
 
 
 21)
-
 select temp.nome, valorTotal/qtdAlunos valorPorAlunoPorProfessor
 from
 (
@@ -267,7 +262,6 @@ group by e.matAluno, proj.titulo
 order by proj.titulo, e.matAluno;
 
 
-
 --v2 - após análise, achei importante mostrar o código do projeto
 select proj.orcamento / qtdAluno as valorOrcamentoPorAluno, temp01.codProjeto
 from
@@ -281,7 +275,6 @@ join projeto proj ON proj.inscricao = temp01.codProjeto;
 
 
 23)
-
 --v1 com select aninhado
 
 select nome, matricula from professor
@@ -291,7 +284,6 @@ select distinct matProfessor from projeto
 );
 
 
-
 --v2
 select prof.nome, prof.matricula, proj.titulo as nomeProjeto
 from professor prof
@@ -299,9 +291,7 @@ LEFT join projeto proj ON prof.matricula = proj.matProfessor
 where proj.titulo is null;
 
 
-
 24)
-
 select a.matricula
 from aluno a
 left join equipe e ON a.matricula = e.matAluno
@@ -310,12 +300,42 @@ where e.matAluno is NULL;
 
 
 25)
+--observação: o modelo não suporta adequadamente as consultas do 25 ao 29, pois não existe conexão direta entre curso e professor.
+--devido ao fato de a única conexão entre curso e projeto ser através da Equipe(muito-para-muitos), haverá registros repetidos conectando um curso a um projeto.s
 
---v1 - essa consulta não está correta
+
+c- essa consulta não está correta
 select a.curso, count(codProjeto) as qtdProjetos
 from aluno a
 join equipe e ON a.matricula = e.matAluno
 group by a.curso;
+
+--v2
+select a.curso, e.codProjeto
+from aluno a
+join equipe e ON a.matricula = e.matAluno
+group by a.curso, e.codProjeto
+order by a.curso, e.codProjeto;
+
+--v3
+select distinct a.curso, e.codProjeto
+from aluno a
+join equipe e ON a.matricula = e.matAluno;
+
+--v4
+--esta consulta é a que mais chega perto do que o exercício está pedindo, porém aqui mostra a quantidade de projetos que um curso possui alunos associados a ele.
+--neste caso não podemos pensar em somar a quantidade total de projetos de todos os cursos, mas sim temos a quantidade de projetos que os alunos de um curso participa.
+select curso, count(projeto) as qtdProjetos
+from
+(
+select distinct a.curso as curso, e.codProjeto as projeto
+from aluno a
+join equipe e ON a.matricula = e.matAluno
+) as tmp
+group by curso;
+
+
+--conclusão: para que as consultas de 25 a 29 possam ser feitas corretamente, o modelo físico deveria ter uma conexão entre Curso e Professor.
 
 
 --v2
@@ -323,39 +343,16 @@ group by a.curso;
 --e nós temos apenas 10 projetos cadastrados.
 
 
-26)
+26) --TODO: mesma ideia/análise do 25
 
---TODO: mesma ideia do 25
+27) --TODO: mesma ideia/análise do 25
 
+28) --TODO: mesma ideia/análise do 25
 
-
-27) -parece o v1 do exercício 25
-
---v1 - ainda não é suficiente, pois contabiliza projeto a mais
-select c.nome, count(codProjeto) as qtdProjetos
-from aluno a
-join equipe e ON a.matricula = e.matAluno
-join curso c  ON c.sigla = a.curso
-group by c.nome;
-
-
---v2 TODO: não pode fazer o join com a equipe
-
-
-28)
-
-select dataFim - dataInicio as duracao, inscricao
-from projeto;
-
---TODO: juntar de alguma forma com o curso
-
-
-29) TODO: usar a mesma estratégia da questão 25
-
+29) --TODO: mesma ideia/análise do 25
 
 
 30)
-
 select nome from professor where titulacao = 
 (
 select titulacao from professor where nome = 'Robson'
@@ -363,24 +360,27 @@ select titulacao from professor where nome = 'Robson'
 
 
 31)
-
 --o limit é específico do postgres
 
+( --precisa do parênteses para não dar erro no UNION com o limit
 select titulo, orcamento
 from projeto
 order by orcamento DESC
 limit 4 
+)
 UNION
+(
 select titulo, orcamento
 from projeto
 order by orcamento ASC
-limit 4; --o limit é específico do postgres
+limit 4
+);
 
 
-
-
-
-
-
+32)
+select p.titulo, e.matAluno --, p.dataInicio, e.dataInicioParticip
+from equipe e
+join projeto p ON p.inscricao = e.codProjeto
+where p.dataInicio = e.dataInicioParticip AND e.dataFimParticip IS NULL;
 
 

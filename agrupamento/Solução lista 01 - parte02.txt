@@ -1,0 +1,132 @@
+Lista de exercícios - Agrupamentos
+
+Parte 01
+
+1)
+select avg(idade) as mediaDeIdadeDasPessoas from pessoa;
+
+2)
+select avg(idade) mediaIdadeMulheres from pessoa where sexo = 'F';
+
+3)
+select min(idade) maisNovo, max(idade) maisVelho from pessoa where sexo = 'M';
+
+4)
+select count(cpf) qtdPessoas, sum(idade) somaDasIdades, max(idade) maisVelho, min(idade) maisNovo, avg(idade) mediaIdade from pessoa;
+
+5)
+select sexo, avg(idade) mediaIdade from pessoa group by sexo;
+
+6)
+select cidade, avg(idade) mediaIdade from pessoa group by cidade;
+
+7)
+select cidade, sexo, avg(idade) mediaIdade from pessoa group by cidade, sexo order by cidade;
+
+8)
+select cidade, avg(idade) mediaIdade from pessoa group by cidade having avg(idade) < 35;
+
+9)
+select cidade, count(cpf) qtdPessoas from pessoa group by cidade having count(cpf) > 2;
+
+
+
+Parte 02
+
+1)
+
+select nome from pessoa 
+where idade = (
+select max(idade) from pessoa where sexo = 'M'
+) AND sexo = 'M';
+
+2)
+
+select original.cidade, temp2.nome
+from
+(
+select cidade, max(idade) maiorIdade
+from pessoa
+group by cidade
+) temp1
+join
+(
+select cidade, idade, nome
+from pessoa
+) original 
+ON temp1.cidade = original.cidade AND temp1.maiorIdade = original.idade;
+
+
+3)
+
+select original.nome, temp1.menorIdade, temp1.sexo
+from
+(
+select min(idade) menorIdade, sexo, nome from pessoa group by sexo, nome
+) temp1
+join
+(
+select idade, sexo, nome
+from pessoa
+) original 
+ON temp1.menorIdade = original.idade AND temp1.sexo = original.sexo;
+
+
+4)
+
+select avg(idade) as media, cidade
+from pessoa
+group by cidade
+order by media ASC
+limit 1;
+
+
+5)
+
+select nome from pessoa 
+where idade = (
+select max(idade) from pessoa
+);
+
+
+6)
+
+select nome from pessoa 
+where idade = (
+select min(idade) from pessoa
+);
+
+
+7)
+
+select nome from pessoa 
+where idade = (
+select min(idade) from pessoa where sexo = 'F'
+) AND sexo = 'F';
+
+
+8)
+
+select (select max(idade) from pessoa) - idade, nome
+from pessoa;
+
+
+9)
+
+select homens.cidade, mulheres.qtdPessoas, homens.qtdPessoas
+from
+(
+select count(cpf) as qtdPessoas, cidade
+from pessoa where sexo = 'M'
+group by cidade
+) homens
+left join
+(
+select count(cpf) as qtdPessoas, cidade
+from pessoa where sexo = 'F'
+group by cidade
+) mulheres
+ON mulheres.cidade = homens.cidade
+where homens.qtdPessoas > mulheres.qtdPessoas OR mulheres.cidade IS NULL;
+
+
