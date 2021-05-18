@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.edu.univas.si5.bd2.model.Curso;
 
@@ -12,8 +14,8 @@ public class CursoDAO {
 
 	// informaÃ§Ãµes para conectar no banco
 	private String url = "jdbc:postgresql://localhost/bd2"; // usar o padrÃ£o do JDBC para o Postgres
-	private String user = "bd2";
-	private String pass = "aluno12";
+	private String user = "bd2"; // boa prática: o usuário senha não se coloca fixo no código
+	private String pass = "aluno12"; // e nem faz commit de usuário e senha.
 
 	public void save(Curso curso) {
 
@@ -33,12 +35,33 @@ public class CursoDAO {
 
 	public void update(Curso curso) {
 		//similar ao insert
-		//TODO: implementar e testar o update
+		try (Connection conn = DriverManager.getConnection(url, user, pass);) {
+
+			String update = "update curso set nome = ? where sigla = ?";
+
+			PreparedStatement st = conn.prepareStatement(update);
+			st.setString(1, curso.getNome());
+			st.setInt(2, curso.getSigla());
+
+			st.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void delete(Curso curso) {
+	public void delete(int sigla) {
 		//similar ao insert
-		//TODO: implementar e testar o delete
+		try (Connection conn = DriverManager.getConnection(url, user, pass);) {
+
+			String delete = "delete from curso where sigla = ?";
+
+			PreparedStatement st = conn.prepareStatement(delete);
+			st.setInt(1, sigla);
+
+			st.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Curso findById(int sigla) {
@@ -63,4 +86,28 @@ public class CursoDAO {
 		return null;
 	}
 
+	public List<Curso> findAll() {
+		
+		String select = "select sigla, nome from curso";
+		List<Curso> cursos = new ArrayList<>();
+		try (Connection conn = DriverManager.getConnection(url, user, pass);) {
+			
+			PreparedStatement st = conn.prepareStatement(select);
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) { //navega nas tupla (linhas) do resultado do select
+				//cria um objeto curso
+				Curso curso = new Curso();
+				
+				//busca as infomações do curso e seta no objeto
+				curso.setSigla(rs.getInt("sigla"));
+				curso.setNome(rs.getString("nome"));
+				//adiciona o curso na lista
+				cursos.add(curso);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return cursos;
+	}
 }
