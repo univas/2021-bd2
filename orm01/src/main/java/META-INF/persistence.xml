@@ -11,9 +11,9 @@
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
 
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"></property>
-			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/aluno"></property>
-			<property name="javax.persistence.jdbc.user" value="aluno"></property>
-			<property name="javax.persistence.jdbc.password" value="aluno"></property>
+			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/bd2"></property>
+			<property name="javax.persistence.jdbc.user" value="bd2"></property>
+			<property name="javax.persistence.jdbc.password" value="aluno123"></property>
         </properties>
     </persistence-unit>
 </persistence>
