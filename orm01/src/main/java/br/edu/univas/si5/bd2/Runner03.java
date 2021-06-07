@@ -1,5 +1,7 @@
 package br.edu.univas.si5.bd2;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 
 import br.edu.univas.si5.bd2.model.Funcionario;
@@ -9,8 +11,9 @@ public class Runner03 {
 
 	public static void main(String[] args) {
 		Funcionario fun = new Funcionario();
-		fun.setNome("Júlia");
+		fun.setNome("Jane");
 		fun.setSexo("F");
+		fun.setNascimento(new Date());
 
 		// obter uma instância do EntityManager
 		EntityManager em;

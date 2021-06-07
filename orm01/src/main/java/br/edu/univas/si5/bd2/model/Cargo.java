@@ -8,19 +8,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="POSITION")
+@Table(name = "POSITION")
 public class Cargo implements Serializable {
 
 	@Id
-	@Column(name="CODE")
+	@Column(name = "CODE")
 	private Integer codigo;
-	
-	@Column(name="NAME")
+
+	@Column(name = "NAME")
 	private String nome;
-	
-	@Column(name="WAGE")
+
+	@Column(name = "WAGE")
 	private float salario;
-	
+
 	public Cargo() {
 
 	}
@@ -48,5 +48,10 @@ public class Cargo implements Serializable {
 	public void setSalario(float salario) {
 		this.salario = salario;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Cargo [codigo=" + codigo + ", nome=" + nome + ", salario=" + salario + "]";
+	}
+
 }
