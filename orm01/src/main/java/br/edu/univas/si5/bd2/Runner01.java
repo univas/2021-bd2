@@ -10,10 +10,10 @@ public class Runner01 {
 	public static void main(String[] args) {
 		
 		//cria um objeto de teste
-		Cargo programador = new Cargo();
-		programador.setCodigo(6);
-		programador.setNome("Gerente");
-		programador.setSalario(5000f);
+		Cargo cargo = new Cargo();
+		cargo.setCodigo(7);
+		cargo.setNome("QA");
+		cargo.setSalario(5000f);
 		
 		//obter uma instância do EntityManager
 		EntityManager em;
@@ -21,7 +21,7 @@ public class Runner01 {
 		
 		//persistir o objeto (dentro de uma transação)
 		em.getTransaction().begin();//inicia a transação
-		em.persist(programador);
+		em.persist(cargo);
 		em.getTransaction().commit();//finaliza a transação
 	}
 }
