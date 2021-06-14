@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +29,10 @@ public class Funcionario implements Serializable {
 	private Date nascimento;
 	@Transient
 	private int idade;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USUARIO_FK")
+	private Usuario usuario;
 
 	public Funcionario() {
 	}
@@ -68,6 +75,14 @@ public class Funcionario implements Serializable {
 
 	public void setIdade(int idade) {
 		this.idade = idade;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	@Override
