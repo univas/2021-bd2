@@ -11,9 +11,9 @@ public class Runner01 {
 		
 		//cria um objeto de teste
 		Cargo cargo = new Cargo();
-		cargo.setCodigo(7);
-		cargo.setNome("QA");
-		cargo.setSalario(5000f);
+		cargo.setCodigo(8);
+		cargo.setNome("Tester");
+		cargo.setSalario(4000f);
 		
 		//obter uma instância do EntityManager
 		EntityManager em;

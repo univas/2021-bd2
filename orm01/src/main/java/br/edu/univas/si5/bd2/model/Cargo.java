@@ -1,10 +1,13 @@
 package br.edu.univas.si5.bd2.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -20,6 +23,9 @@ public class Cargo implements Serializable {
 
 	@Column(name = "WAGE")
 	private float salario;
+
+	@OneToMany(mappedBy = "cargo", fetch = FetchType.EAGER) // o padrão do fetch é LAZY
+	private Set<Funcionario> funcionarios;
 
 	public Cargo() {
 
@@ -47,6 +53,14 @@ public class Cargo implements Serializable {
 
 	public void setSalario(float salario) {
 		this.salario = salario;
+	}
+
+	public Set<Funcionario> getFuncionarios() {
+		return funcionarios;
+	}
+
+	public void setFuncionarios(Set<Funcionario> funcionarios) {
+		this.funcionarios = funcionarios;
 	}
 
 	@Override

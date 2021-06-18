@@ -15,7 +15,7 @@ public class Usuario implements Serializable {
 	private String password;
 	private boolean active;
 
-	@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "usuario")
 	private Funcionario funcionario;
 
 	public Usuario() {
