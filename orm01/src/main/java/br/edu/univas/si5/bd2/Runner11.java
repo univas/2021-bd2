@@ -15,7 +15,7 @@ public class Runner11 {
 		EntityManager em = HibernateUtil.getEntityManager();
 
 		// buscar o cargo
-		Integer cargoPk = 5; // programador
+		Integer cargoPk = 7; // QA
 		Cargo cargo = em.find(Cargo.class, cargoPk);
 		if (cargo != null) {
 
@@ -24,12 +24,12 @@ public class Runner11 {
 			Usuario user = new Usuario();
 			user.setActive(true);
 			user.setPassword("pass");
-			user.setUsername("julia");
+			user.setUsername("joaquim");
 
 			// criar um objeto Funcionario
 			Funcionario fun = new Funcionario();
-			fun.setNome("Júlia");
-			fun.setSexo("F");
+			fun.setNome("Joaquim");
+			fun.setSexo("M");
 			fun.setNascimento(new Date());
 
 			// setar o usuário dentro do funcionário
