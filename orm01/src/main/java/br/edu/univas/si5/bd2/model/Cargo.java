@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -23,6 +24,9 @@ public class Cargo implements Serializable {
 
 	@Column(name = "WAGE")
 	private float salario;
+
+	@Enumerated // o default é ORDINAL
+	private TipoCargo type;
 
 	@OneToMany(mappedBy = "cargo", fetch = FetchType.EAGER) // o padrão do fetch é LAZY
 	private Set<Funcionario> funcionarios;
@@ -55,6 +59,14 @@ public class Cargo implements Serializable {
 		this.salario = salario;
 	}
 
+	public TipoCargo getType() {
+		return type;
+	}
+
+	public void setType(TipoCargo type) {
+		this.type = type;
+	}
+
 	public Set<Funcionario> getFuncionarios() {
 		return funcionarios;
 	}
@@ -65,7 +77,7 @@ public class Cargo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Cargo [codigo=" + codigo + ", nome=" + nome + ", salario=" + salario + "]";
+		return "Cargo [codigo=" + codigo + ", nome=" + nome + ", salario=" + salario + ", type=" + type + "]";
 	}
 
 }
