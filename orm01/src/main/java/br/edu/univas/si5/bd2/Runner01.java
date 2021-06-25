@@ -3,6 +3,7 @@ package br.edu.univas.si5.bd2;
 import javax.persistence.EntityManager;
 
 import br.edu.univas.si5.bd2.model.Cargo;
+import br.edu.univas.si5.bd2.model.TipoCargo;
 import br.edu.univas.si5.bd2.utils.HibernateUtil;
 
 public class Runner01 {
@@ -11,9 +12,10 @@ public class Runner01 {
 		
 		//cria um objeto de teste
 		Cargo cargo = new Cargo();
-		cargo.setCodigo(8);
-		cargo.setNome("Tester");
-		cargo.setSalario(4000f);
+		cargo.setCodigo(12);
+		cargo.setNome("Entregador");
+		cargo.setSalario(2000f);
+		cargo.setType(TipoCargo.PJ);
 		
 		//obter uma instância do EntityManager
 		EntityManager em;

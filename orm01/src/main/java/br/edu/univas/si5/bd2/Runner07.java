@@ -19,7 +19,9 @@ public class Runner07 {
 		
 		List<Cargo> cargos = query.getResultList();// executa a consulta
 		
-		System.out.println("Cargos: " + cargos); // imprimir os cargos
+		System.out.println("Cargos: ");// imprimir os cargos
+		for (Cargo cargo : cargos) {
+			System.out.println(cargo);
+		}
 	}
-
 }
